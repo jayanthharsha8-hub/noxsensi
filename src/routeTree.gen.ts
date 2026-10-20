@@ -10,33 +10,91 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DpiRouteImport } from './routes/dpi'
+import { Route as HelpRouteImport } from './routes/help'
+import { Route as SaveRouteImport } from './routes/save'
+import { Route as BrandBrandRouteImport } from './routes/brand.$brand'
+import { Route as BrandBrandModelRouteImport } from './routes/brand.$brand.$model'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DpiRoute = DpiRouteImport.update({
+  id: '/dpi',
+  path: '/dpi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SaveRoute = SaveRouteImport.update({
+  id: '/save',
+  path: '/save',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrandBrandRoute = BrandBrandRouteImport.update({
+  id: '/brand/$brand',
+  path: '/brand/$brand',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrandBrandModelRoute = BrandBrandModelRouteImport.update({
+  id: '/$model',
+  path: '/$model',
+  getParentRoute: () => BrandBrandRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dpi': typeof DpiRoute
+  '/help': typeof HelpRoute
+  '/save': typeof SaveRoute
+  '/brand/$brand': typeof BrandBrandRouteWithChildren
+  '/brand/$brand/$model': typeof BrandBrandModelRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dpi': typeof DpiRoute
+  '/help': typeof HelpRoute
+  '/save': typeof SaveRoute
+  '/brand/$brand': typeof BrandBrandRouteWithChildren
+  '/brand/$brand/$model': typeof BrandBrandModelRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dpi': typeof DpiRoute
+  '/help': typeof HelpRoute
+  '/save': typeof SaveRoute
+  '/brand/$brand': typeof BrandBrandRouteWithChildren
+  '/brand/$brand/$model': typeof BrandBrandModelRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    '/' | '/dpi' | '/help' | '/save' | '/brand/$brand' | '/brand/$brand/$model'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    '/' | '/dpi' | '/help' | '/save' | '/brand/$brand' | '/brand/$brand/$model'
+  id:
+    | '__root__'
+    | '/'
+    | '/dpi'
+    | '/help'
+    | '/save'
+    | '/brand/$brand'
+    | '/brand/$brand/$model'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DpiRoute: typeof DpiRoute
+  HelpRoute: typeof HelpRoute
+  SaveRoute: typeof SaveRoute
+  BrandBrandRoute: typeof BrandBrandRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +106,62 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dpi': {
+      id: '/dpi'
+      path: '/dpi'
+      fullPath: '/dpi'
+      preLoaderRoute: typeof DpiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/save': {
+      id: '/save'
+      path: '/save'
+      fullPath: '/save'
+      preLoaderRoute: typeof SaveRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/brand/$brand': {
+      id: '/brand/$brand'
+      path: '/brand/$brand'
+      fullPath: '/brand/$brand'
+      preLoaderRoute: typeof BrandBrandRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/brand/$brand/$model': {
+      id: '/brand/$brand/$model'
+      path: '/$model'
+      fullPath: '/brand/$brand/$model'
+      preLoaderRoute: typeof BrandBrandModelRouteImport
+      parentRoute: typeof BrandBrandRoute
+    }
   }
 }
 
+interface BrandBrandRouteChildren {
+  BrandBrandModelRoute: typeof BrandBrandModelRoute
+}
+
+const BrandBrandRouteChildren: BrandBrandRouteChildren = {
+  BrandBrandModelRoute: BrandBrandModelRoute,
+}
+
+const BrandBrandRouteWithChildren = BrandBrandRoute._addFileChildren(
+  BrandBrandRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DpiRoute: DpiRoute,
+  HelpRoute: HelpRoute,
+  SaveRoute: SaveRoute,
+  BrandBrandRoute: BrandBrandRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
