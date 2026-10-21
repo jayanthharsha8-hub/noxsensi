@@ -369,5 +369,5 @@ export function getModel(brandId: string, modelId: string): DeviceModel | undefi
 
 /** Default RAM shown on the generator screen (reference state uses 8GB). */
 export function defaultRam(model: DeviceModel): string {
-  return model.ramOptions.includes("8GB") ? "8GB" : model.ramOptions[model.ramOptions.length - 1];
+  return model.ramOptions.includes("8GB") ? "8GB" : (model.ramOptions[model.ramOptions.length - 1] ?? "8GB");
 }
