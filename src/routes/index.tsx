@@ -75,7 +75,8 @@ function Index() {
             Better Settings · More Headshots · Win More
           </p>
           <Link
-            to="/brand/samsung"
+            to="/brand/$brand"
+            params={{ brand: "samsung" }}
             className="mt-1.5 flex w-fit items-center gap-2 rounded-lg bg-primary px-5 py-2.5 font-display text-sm font-extrabold tracking-wide text-primary-foreground shadow-glow transition-transform active:scale-[0.98]"
           >
             GET STARTED <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
