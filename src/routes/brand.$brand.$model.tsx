@@ -218,7 +218,7 @@ function Generator() {
           {SENSITIVITY_ORDER.map((key, index) => {
             const { label, min, max } = SENSITIVITY_RANGES[key];
             const value = result[key];
-            const Icon = ROW_ICONS[index];
+            const Icon = ROW_ICONS[index] ?? User;
             const pct = Math.round(((value - min) / (max - min)) * 100);
             return (
               <div

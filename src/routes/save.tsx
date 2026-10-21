@@ -42,7 +42,8 @@ function SavePage() {
           Generate your perfect sensitivity and it will show up here.
         </p>
         <Link
-          to="/brand/samsung"
+          to="/brand/$brand"
+          params={{ brand: "samsung" }}
           className="mt-2 flex items-center gap-2 rounded-lg bg-primary px-5 py-2.5 font-display text-sm font-extrabold tracking-wide text-primary-foreground shadow-glow transition-transform active:scale-[0.98]"
         >
           <Zap className="h-4 w-4" /> GENERATE NOW
