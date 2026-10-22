@@ -8,3 +8,8 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+## Routing
+
+- `src/routes/brand.$brand.tsx` is a layout route that renders only `<Outlet />`; the brand models page lives in `brand.$brand.index.tsx` and the generator in `brand.$brand.$model.tsx`. Why: a parent route without an `<Outlet />` swallows its child routes — the model page URL changed but never rendered.
+
