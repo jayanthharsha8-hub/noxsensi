@@ -36,7 +36,7 @@ import {
 
 const ROW_ICONS = [User, Crosshair, Focus, ScanEye, Telescope];
 
-export const Route = createFileRoute("/brand/$brand/$model_")({
+export const Route = createFileRoute("/brand/$brand/$model")({
   head: () => ({
     meta: [
       { title: "Sensitivity Generator — NOX SENSI" },
@@ -78,7 +78,7 @@ function Generator() {
   if (!brand || !model) throw notFound();
 
   const changeModel = (value: string) =>
-    navigate({ to: "/brand/$brand/$model_", params: { brand: brandId, model: value } });
+    navigate({ to: "/brand/$brand/$model", params: { brand: brandId, model: value } });
 
   const changeRam = (value: string) => {
     setRam(value);
