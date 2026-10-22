@@ -14,6 +14,7 @@ import { Route as DpiRouteImport } from './routes/dpi'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as SaveRouteImport } from './routes/save'
 import { Route as BrandBrandRouteImport } from './routes/brand.$brand'
+import { Route as BrandBrandIndexRouteImport } from './routes/brand.$brand.index'
 import { Route as BrandBrandModelRouteImport } from './routes/brand.$brand.$model'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const BrandBrandRoute = BrandBrandRouteImport.update({
   path: '/brand/$brand',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BrandBrandIndexRoute = BrandBrandIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BrandBrandRoute,
+} as any)
 const BrandBrandModelRoute = BrandBrandModelRouteImport.update({
   id: '/$model',
   path: '/$model',
@@ -54,14 +60,15 @@ export interface FileRoutesByFullPath {
   '/save': typeof SaveRoute
   '/brand/$brand': typeof BrandBrandRouteWithChildren
   '/brand/$brand/$model': typeof BrandBrandModelRoute
+  '/brand/$brand/': typeof BrandBrandIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dpi': typeof DpiRoute
   '/help': typeof HelpRoute
   '/save': typeof SaveRoute
-  '/brand/$brand': typeof BrandBrandRouteWithChildren
   '/brand/$brand/$model': typeof BrandBrandModelRoute
+  '/brand/$brand': typeof BrandBrandIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -71,14 +78,21 @@ export interface FileRoutesById {
   '/save': typeof SaveRoute
   '/brand/$brand': typeof BrandBrandRouteWithChildren
   '/brand/$brand/$model': typeof BrandBrandModelRoute
+  '/brand/$brand/': typeof BrandBrandIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/dpi' | '/help' | '/save' | '/brand/$brand' | '/brand/$brand/$model'
+    | '/'
+    | '/dpi'
+    | '/help'
+    | '/save'
+    | '/brand/$brand'
+    | '/brand/$brand/$model'
+    | '/brand/$brand/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/dpi' | '/help' | '/save' | '/brand/$brand' | '/brand/$brand/$model'
+    '/' | '/dpi' | '/help' | '/save' | '/brand/$brand/$model' | '/brand/$brand'
   id:
     | '__root__'
     | '/'
@@ -87,6 +101,7 @@ export interface FileRouteTypes {
     | '/save'
     | '/brand/$brand'
     | '/brand/$brand/$model'
+    | '/brand/$brand/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -134,6 +149,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BrandBrandRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/brand/$brand/': {
+      id: '/brand/$brand/'
+      path: '/'
+      fullPath: '/brand/$brand/'
+      preLoaderRoute: typeof BrandBrandIndexRouteImport
+      parentRoute: typeof BrandBrandRoute
+    }
     '/brand/$brand/$model': {
       id: '/brand/$brand/$model'
       path: '/$model'
@@ -146,10 +168,12 @@ declare module '@tanstack/react-router' {
 
 interface BrandBrandRouteChildren {
   BrandBrandModelRoute: typeof BrandBrandModelRoute
+  BrandBrandIndexRoute: typeof BrandBrandIndexRoute
 }
 
 const BrandBrandRouteChildren: BrandBrandRouteChildren = {
   BrandBrandModelRoute: BrandBrandModelRoute,
+  BrandBrandIndexRoute: BrandBrandIndexRoute,
 }
 
 const BrandBrandRouteWithChildren = BrandBrandRoute._addFileChildren(
