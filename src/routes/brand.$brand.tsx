@@ -118,7 +118,7 @@ function BrandModels() {
         {models.map((model) => (
           <Link
             key={model.id}
-            to="/brand/$brand/$model"
+            to="/brand/$brand/$model_"
             params={{ brand: brandId, model: model.id }}
             className="flex items-center gap-2.5 rounded-xl border border-border bg-card p-3 shadow-card transition-colors hover:border-primary/40"
           >
