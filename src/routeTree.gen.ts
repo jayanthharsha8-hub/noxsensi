@@ -15,7 +15,7 @@ import { Route as HelpRouteImport } from './routes/help'
 import { Route as SaveRouteImport } from './routes/save'
 import { Route as BrandBrandRouteImport } from './routes/brand.$brand'
 import { Route as BrandBrandIndexRouteImport } from './routes/brand.$brand.index'
-import { Route as BrandBrandModelRouteImport } from './routes/brand.$brand.$model_'
+import { Route as BrandBrandModelRouteImport } from './routes/brand.$brand.$model'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -48,7 +48,7 @@ const BrandBrandIndexRoute = BrandBrandIndexRouteImport.update({
   getParentRoute: () => BrandBrandRoute,
 } as any)
 const BrandBrandModelRoute = BrandBrandModelRouteImport.update({
-  id: '/$model_',
+  id: '/$model',
   path: '/$model',
   getParentRoute: () => BrandBrandRoute,
 } as any)
@@ -77,7 +77,7 @@ export interface FileRoutesById {
   '/help': typeof HelpRoute
   '/save': typeof SaveRoute
   '/brand/$brand': typeof BrandBrandRouteWithChildren
-  '/brand/$brand/$model_': typeof BrandBrandModelRoute
+  '/brand/$brand/$model': typeof BrandBrandModelRoute
   '/brand/$brand/': typeof BrandBrandIndexRoute
 }
 export interface FileRouteTypes {
@@ -100,7 +100,7 @@ export interface FileRouteTypes {
     | '/help'
     | '/save'
     | '/brand/$brand'
-    | '/brand/$brand/$model_'
+    | '/brand/$brand/$model'
     | '/brand/$brand/'
   fileRoutesById: FileRoutesById
 }
@@ -156,8 +156,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BrandBrandIndexRouteImport
       parentRoute: typeof BrandBrandRoute
     }
-    '/brand/$brand/$model_': {
-      id: '/brand/$brand/$model_'
+    '/brand/$brand/$model': {
+      id: '/brand/$brand/$model'
       path: '/$model'
       fullPath: '/brand/$brand/$model'
       preLoaderRoute: typeof BrandBrandModelRouteImport
