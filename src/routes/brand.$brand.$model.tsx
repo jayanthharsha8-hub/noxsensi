@@ -7,6 +7,8 @@ import {
 } from "@tanstack/react-router";
 import {
   ArrowLeft,
+  Bookmark,
+  BookmarkCheck,
   ChevronDown,
   Cog,
   Crosshair,
@@ -26,13 +28,12 @@ import { BrandIcon } from "@/components/brand-icon";
 import { NoxLogo } from "@/components/nox-logo";
 import { defaultRam, getBrand, getModel } from "@/data/devices";
 import {
-  GALAXY_S24_EXAMPLE,
   SENSITIVITY_ORDER,
   SENSITIVITY_RANGES,
-  getDefaultResult,
   generateSensitivity,
   type SensitivityResult,
 } from "@/lib/sensitivity";
+import { addSavedSetting, savedSettingId } from "@/lib/save";
 
 const ROW_ICONS = [User, Crosshair, Focus, ScanEye, Telescope];
 
@@ -63,16 +64,17 @@ function Generator() {
   const navigate = useNavigate();
 
   const [ram, setRam] = useState(() => (model ? defaultRam(model) : "8GB"));
-  const [result, setResult] = useState<SensitivityResult>(() =>
-    model ? getDefaultResult(brandId, modelId, defaultRam(model)) : GALAXY_S24_EXAMPLE,
-  );
+  // No sensitivity until the user presses Generate.
+  const [result, setResult] = useState<SensitivityResult | null>(null);
+  const [roll, setRoll] = useState(0);
+  const [saved, setSaved] = useState(false);
 
   // Reset RAM + result when the selected model changes.
   useEffect(() => {
     if (!model) return;
-    const nextRam = defaultRam(model);
-    setRam(nextRam);
-    setResult(getDefaultResult(brandId, modelId, nextRam));
+    setRam(defaultRam(model));
+    setResult(null);
+    setSaved(false);
   }, [brandId, modelId, model]);
 
   if (!brand || !model) throw notFound();
@@ -80,12 +82,33 @@ function Generator() {
   const changeModel = (value: string) =>
     navigate({ to: "/brand/$brand/$model", params: { brand: brandId, model: value } });
 
+  // Changing RAM hides the previous result: values only show after Generate.
   const changeRam = (value: string) => {
     setRam(value);
-    setResult(getDefaultResult(brandId, modelId, value));
+    setResult(null);
+    setSaved(false);
   };
 
-  const generate = () => setResult(generateSensitivity(brandId, model.name, ram));
+  const generate = () => {
+    setResult(generateSensitivity(brandId, model.name, ram, roll));
+    setRoll((n) => n + 1);
+    setSaved(false);
+  };
+
+  const save = () => {
+    if (!result) return;
+    addSavedSetting({
+      id: savedSettingId(brandId, modelId, ram),
+      brandId,
+      brandLabel: brand.label,
+      modelId,
+      modelName: model.name,
+      ram,
+      values: result,
+      savedAt: Date.now(),
+    });
+    setSaved(true);
+  };
 
   return (
     <AppFrame active="dpi">
@@ -127,10 +150,10 @@ function Generator() {
             <div className="h-6 w-16">
               <BrandIcon brand={brand} />
             </div>
-            <h1 className="mt-1.5 truncate text-2xl font-extrabold leading-tight">
+            <h1 className="mt-1.5 break-words text-2xl font-extrabold leading-tight">
               {model.name}
             </h1>
-            <p className="truncate text-sm text-muted-foreground">({model.code})</p>
+            <p className="break-words text-sm text-muted-foreground">({model.code})</p>
           </div>
           <div className="flex shrink-0 flex-col items-center gap-2">
             <span className="flex items-center gap-2 rounded-lg border border-primary/60 bg-background px-3 py-2">
@@ -197,62 +220,82 @@ function Generator() {
         <Cog className="h-5 w-5" /> Generate Sensitivity
       </button>
 
-      {/* Results */}
-      <section className="mt-4 rounded-2xl border border-border bg-card p-4 shadow-card">
-        <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-3">
-          <Crosshair className="h-7 w-7 shrink-0 text-primary" strokeWidth={2.2} />
-          <div className="min-w-0">
-            <h2 className="font-display text-lg font-extrabold uppercase tracking-wide">
-              Your Sensitivity
-            </h2>
-            <p className="mt-0.5 truncate text-xs text-muted-foreground">
-              Optimized for {brand.label} {model.name} ({ram})
-            </p>
+      {/* Results — only rendered after Generate is pressed */}
+      {result && (
+        <section className="mt-4 rounded-2xl border border-border bg-card p-4 shadow-card">
+          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-3">
+            <Crosshair className="h-7 w-7 shrink-0 text-primary" strokeWidth={2.2} />
+            <div className="min-w-0">
+              <h2 className="font-display text-lg font-extrabold uppercase tracking-wide">
+                Your Sensitivity
+              </h2>
+              <p className="mt-0.5 break-words text-xs text-muted-foreground">
+                Optimized for {brand.label} {model.name} ({ram})
+              </p>
+            </div>
+            <span className="flex shrink-0 items-center gap-1.5 rounded-full border border-primary/50 px-3 py-1.5 text-[11px] font-semibold text-primary">
+              <Zap className="h-3.5 w-3.5" /> Best for Headshots
+            </span>
           </div>
-          <span className="flex shrink-0 items-center gap-1.5 rounded-full border border-primary/50 px-3 py-1.5 text-[11px] font-semibold text-primary">
-            <Zap className="h-3.5 w-3.5" /> Best for Headshots
-          </span>
-        </div>
 
-        <div className="mt-4 space-y-3">
-          {SENSITIVITY_ORDER.map((key, index) => {
-            const { label, min, max } = SENSITIVITY_RANGES[key];
-            const value = result[key];
-            const Icon = ROW_ICONS[index] ?? User;
-            const pct = Math.round(((value - min) / (max - min)) * 100);
-            return (
-              <div
-                key={key}
-                className="flex items-center gap-3 rounded-xl border border-border bg-secondary/60 p-3"
-              >
-                <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-border bg-card">
-                  <Icon className="h-5 w-5 text-accent" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <p className="truncate text-sm font-bold">{label}</p>
-                    <p className="text-xl font-extrabold leading-none tabular-nums">
-                      {value}
+          <div className="mt-4 space-y-3">
+            {SENSITIVITY_ORDER.map((key, index) => {
+              const { label, min, max } = SENSITIVITY_RANGES[key];
+              const value = result[key];
+              const Icon = ROW_ICONS[index] ?? User;
+              // Progress is measured within each category's own range.
+              const pct = Math.round(((value - min) / (max - min)) * 100);
+              return (
+                <div
+                  key={key}
+                  className="flex items-center gap-3 rounded-xl border border-border bg-secondary/60 p-3"
+                >
+                  <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-border bg-card">
+                    <Icon className="h-5 w-5 text-accent" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <p className="truncate text-sm font-bold">{label}</p>
+                      <p className="text-xl font-extrabold leading-none tabular-nums">
+                        {value}
+                      </p>
+                    </div>
+                    <p className="text-[11px] text-muted-foreground">
+                      ({min} - {max})
                     </p>
+                    <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
+                      <div
+                        className="h-full rounded-full bg-primary shadow-glow transition-all duration-500"
+                        style={{ width: `${pct}%` }}
+                      />
+                    </div>
                   </div>
-                  <p className="text-[11px] text-muted-foreground">
-                    ({min} - {max})
-                  </p>
-                  <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-muted">
-                    <div
-                      className="h-full rounded-full bg-primary shadow-glow transition-all duration-500"
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border bg-card">
+                    <Crosshair className="h-4 w-4 text-accent" />
+                  </span>
                 </div>
-                <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-border bg-card">
-                  <Crosshair className="h-4 w-4 text-accent" />
-                </span>
-              </div>
-            );
-          })}
-        </div>
-      </section>
+              );
+            })}
+          </div>
+
+          <button
+            type="button"
+            onClick={save}
+            disabled={saved}
+            className="mt-4 flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-primary/60 bg-background font-display text-base font-extrabold uppercase tracking-wide text-primary shadow-glow transition-transform active:scale-[0.99] disabled:opacity-80"
+          >
+            {saved ? (
+              <>
+                <BookmarkCheck className="h-5 w-5" /> Saved to Save Tab
+              </>
+            ) : (
+              <>
+                <Bookmark className="h-5 w-5" /> Save Sensitivity
+              </>
+            )}
+          </button>
+        </section>
+      )}
 
       {/* Tip */}
       <section className="mt-4 flex items-center gap-3 rounded-2xl border border-border bg-card p-4 shadow-card">
