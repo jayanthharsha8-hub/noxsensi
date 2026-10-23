@@ -1,5 +1,3 @@
-import { defaultRam, getModel, type DeviceModel } from "@/data/devices";
-
 export const SENSITIVITY_RANGES = {
   general: { label: "General", min: 180, max: 200 },
   redDot: { label: "Red Dot", min: 170, max: 195 },
@@ -19,15 +17,6 @@ export const SENSITIVITY_ORDER: SensitivityKey[] = [
   "sniper",
 ];
 
-/** Reference example values shown on first load for the Galaxy S24 (8GB). */
-export const GALAXY_S24_EXAMPLE: SensitivityResult = {
-  general: 188,
-  redDot: 182,
-  scope2x: 171,
-  scope4x: 142,
-  sniper: 166,
-};
-
 function hashString(input: string): number {
   let h = 0;
   for (let i = 0; i < input.length; i++) {
@@ -43,42 +32,21 @@ function seededValue(seed: number, min: number, max: number): number {
   return Math.round(min + frac * (max - min));
 }
 
-/** Random result within each sensitivity's documented range. */
+/**
+ * Random result within each sensitivity's documented range. Deterministic for
+ * the same device, RAM and nonce; each new nonce produces a fresh roll.
+ */
 export function generateSensitivity(
   brandId: string,
   modelName: string,
   ram: string,
+  nonce = 0,
 ): SensitivityResult {
-  const seed = hashString(`${brandId}|${modelName}|${ram}`);
+  const seed = hashString(`${brandId}|${modelName}|${ram}|${nonce}`);
   const result = {} as SensitivityResult;
   SENSITIVITY_ORDER.forEach((key, i) => {
     const { min, max } = SENSITIVITY_RANGES[key];
     result[key] = seededValue(seed + i, min, max);
   });
   return result;
-}
-
-/**
- * Result shown on first load. The reference state (Galaxy S24, 8GB) uses the
- * documented example values; every other device gets a deterministic result
- * inside its ranges (SSR-safe, no hydration mismatch).
- */
-export function getDefaultResult(
-  brandId: string,
-  modelId: string,
-  ram: string,
-): SensitivityResult {
-  if (brandId === "samsung" && modelId === "galaxy-s24" && ram === "8GB") {
-    return GALAXY_S24_EXAMPLE;
-  }
-  const model = getModel(brandId, modelId);
-  if (!model) return generateSensitivity(brandId, modelId, ram);
-  return generateSensitivity(brandId, model.name, ram);
-}
-
-export function defaultResultForModel(
-  brandId: string,
-  model: DeviceModel,
-): SensitivityResult {
-  return getDefaultResult(brandId, model.id, defaultRam(model));
 }

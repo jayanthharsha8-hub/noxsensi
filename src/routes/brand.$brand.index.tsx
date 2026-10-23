@@ -131,7 +131,7 @@ function BrandModels() {
               className="h-12 w-10 shrink-0 object-contain"
             />
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-bold">{model.name}</p>
+              <p className="break-words text-sm font-bold leading-tight">{model.name}</p>
               <p className="text-xs text-muted-foreground">{model.year}</p>
             </div>
             <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
