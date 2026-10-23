@@ -1,11 +1,9 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  GALAXY_S24_EXAMPLE,
   SENSITIVITY_ORDER,
   SENSITIVITY_RANGES,
   generateSensitivity,
-  getDefaultResult,
 } from "@/lib/sensitivity";
 
 function assertWithinRanges(result: Record<string, number>) {
@@ -29,19 +27,31 @@ describe("sensitivity generator", () => {
     }
   });
 
-  it("shows the documented Galaxy S24 (8GB) example values on first load", () => {
-    const result = getDefaultResult("samsung", "galaxy-s24", "8GB");
-    expect(result).toEqual(GALAXY_S24_EXAMPLE);
-    expect(result.general).toBe(188);
-    expect(result.redDot).toBe(182);
-    expect(result.scope2x).toBe(171);
-    expect(result.scope4x).toBe(142);
-    expect(result.sniper).toBe(166);
+  it("stays in range for every documented sensitivity category", () => {
+    const result = generateSensitivity("samsung", "Galaxy S24", "8GB");
+    expect(result.general).toBeGreaterThanOrEqual(180);
+    expect(result.general).toBeLessThanOrEqual(200);
+    expect(result.redDot).toBeGreaterThanOrEqual(170);
+    expect(result.redDot).toBeLessThanOrEqual(195);
+    expect(result.scope2x).toBeGreaterThanOrEqual(160);
+    expect(result.scope2x).toBeLessThanOrEqual(190);
+    expect(result.scope4x).toBeGreaterThanOrEqual(130);
+    expect(result.scope4x).toBeLessThanOrEqual(160);
+    expect(result.sniper).toBeGreaterThanOrEqual(150);
+    expect(result.sniper).toBeLessThanOrEqual(180);
   });
 
-  it("is deterministic for the same device and RAM", () => {
-    const a = generateSensitivity("samsung", "Galaxy S24", "8GB");
-    const b = generateSensitivity("samsung", "Galaxy S24", "8GB");
+  it("is deterministic for the same device, RAM and roll", () => {
+    const a = generateSensitivity("samsung", "Galaxy S24", "8GB", 3);
+    const b = generateSensitivity("samsung", "Galaxy S24", "8GB", 3);
     expect(a).toEqual(b);
+  });
+
+  it("re-rolls values on a new press (nonce)", () => {
+    const first = generateSensitivity("samsung", "Galaxy S24", "8GB", 0);
+    const second = generateSensitivity("samsung", "Galaxy S24", "8GB", 1);
+    assertWithinRanges(first);
+    assertWithinRanges(second);
+    expect(second).not.toEqual(first);
   });
 });
