@@ -1,4 +1,3 @@
-import { Smartphone } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   createFileRoute,
