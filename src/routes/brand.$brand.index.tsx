@@ -1,8 +1,8 @@
+import { Smartphone } from "lucide-react";
 import { useMemo, useState } from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ChevronRight, Search } from "lucide-react";
 
-import { phoneImageFor } from "@/assets/phones";
 import { AppFrame } from "@/components/app-frame";
 import { BrandIcon } from "@/components/brand-icon";
 import { NoxLogo } from "@/components/nox-logo";
@@ -122,14 +122,7 @@ function BrandModels() {
             params={{ brand: brandId, model: model.id }}
             className="flex items-center gap-2.5 rounded-xl border border-border bg-card p-3 shadow-card transition-colors hover:border-primary/40"
           >
-            <img
-              src={phoneImageFor(model.color)}
-              alt={model.name}
-              loading="lazy"
-              width={64}
-              height={64}
-              className="h-12 w-10 shrink-0 object-contain"
-            />
+            <span className="grid h-12 w-10 shrink-0 place-items-center rounded-xl border border-primary/30 bg-secondary"><Smartphone className="h-5 w-5 text-primary" /></span>
             <div className="min-w-0 flex-1">
               <p className="break-words text-sm font-bold leading-tight">{model.name}</p>
               <p className="text-xs text-muted-foreground">{model.year}</p>

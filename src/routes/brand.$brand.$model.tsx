@@ -22,7 +22,6 @@ import {
   Zap,
 } from "lucide-react";
 
-import { phoneImageFor } from "@/assets/phones";
 import { AppFrame } from "@/components/app-frame";
 import { BrandIcon } from "@/components/brand-icon";
 import { NoxLogo } from "@/components/nox-logo";
@@ -138,14 +137,7 @@ function Generator() {
           }}
         />
         <div className="relative flex items-center gap-4">
-          <img
-            src={phoneImageFor(model.color)}
-            alt={model.name}
-            loading="lazy"
-            width={96}
-            height={96}
-            className="h-24 w-20 shrink-0 object-contain"
-          />
+          <span className="grid h-24 w-20 shrink-0 place-items-center rounded-2xl border border-primary/40 bg-secondary shadow-glow"><Smartphone className="h-10 w-10 text-primary" /></span>
           <div className="min-w-0 flex-1">
             <div className="h-6 w-16">
               <BrandIcon brand={brand} />
@@ -162,9 +154,7 @@ function Generator() {
                 {ram} RAM
               </span>
             </span>
-            <span className="max-w-32 text-center text-[11px] font-medium leading-tight text-accent">
-              {model.processor}
-            </span>
+            <span className="text-[11px] font-medium text-accent">{model.year}</span>
           </div>
         </div>
       </section>

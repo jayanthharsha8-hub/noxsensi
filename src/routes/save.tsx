@@ -5,7 +5,6 @@ import { Bookmark, Smartphone, Trash2, Zap } from "lucide-react";
 import { AppFrame } from "@/components/app-frame";
 import { NoxLogo } from "@/components/nox-logo";
 import { getModel } from "@/data/devices";
-import { phoneImageFor } from "@/assets/phones";
 import { SENSITIVITY_ORDER, SENSITIVITY_RANGES } from "@/lib/sensitivity";
 import {
   loadSavedSettings,
@@ -75,7 +74,7 @@ function SavePage() {
           </h1>
           {saved.map((item) => {
             const model = getModel(item.brandId, item.modelId);
-            const image = model ? phoneImageFor(model.color) : null;
+            const image: string | null = model ? null : null;
             return (
               <article
                 key={item.id}
