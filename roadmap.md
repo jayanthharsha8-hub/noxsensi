@@ -1,0 +1,3 @@
+- [ ] Audit and complete each brand's 2025–2026 phone models with defensible names, years, and RAM options.
+- [ ] Apply a premium glassmorphism finish while preserving NOX SENSI's existing layout, colors, typography, navigation, and flows.
+- [ ] Verify model coverage, app tests, preview build, and the main brand-to-model flow.
