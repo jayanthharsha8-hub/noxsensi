@@ -431,7 +431,7 @@ const extraModels: Record<string, DeviceModel[]> = {
     m("edge-60-pro", "Edge 60 Pro", 2025, "XT2503", ["8GB", "12GB"], "purple"),
     m("edge-70-ultra", "Edge 70 Ultra", 2026, "XT2603", ["12GB", "16GB"], "silver"),
   ],
-  pixel: [
+  "google-pixel": [
     m("pixel-10-pro", "Pixel 10 Pro", 2025, "GVU6C", ["16GB"], "silver"),
     m("pixel-10-pro-fold", "Pixel 10 Pro Fold", 2025, "GC15S", ["16GB"], "black"),
     m("pixel-9", "Pixel 9", 2024, "G2YBB", ["12GB"], "green"),
