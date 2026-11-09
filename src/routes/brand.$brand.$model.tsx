@@ -233,8 +233,8 @@ function Generator() {
               const { label, min, max } = SENSITIVITY_RANGES[key];
               const value = result[key];
               const Icon = ROW_ICONS[index] ?? User;
-              // Progress is measured within each category's own range.
-              const pct = Math.round(((value - min) / (max - min)) * 100);
+              // Progress is measured against the 200 sensitivity limit.
+              const pct = Math.min(100, (value / 200) * 100);
               return (
                 <div
                   key={key}

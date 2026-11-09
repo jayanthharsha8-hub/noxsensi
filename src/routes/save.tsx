@@ -117,7 +117,7 @@ function SavePage() {
                   {SENSITIVITY_ORDER.map((key) => {
                     const { label, min, max } = SENSITIVITY_RANGES[key];
                     const value = item.values[key];
-                    const pct = Math.round(((value - min) / (max - min)) * 100);
+                    const pct = Math.min(100, (value / 200) * 100);
                     return (
                       <div
                         key={key}
