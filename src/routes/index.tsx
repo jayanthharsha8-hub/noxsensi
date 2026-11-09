@@ -1,7 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Bell, Crosshair } from "lucide-react";
+import { Bell, Crosshair } from "lucide-react";
 
-import heroBanner from "@/assets/hero-banner.png";
+import { useState } from "react";
+import vipHero from "@/assets/vip-hero.png.asset.json";
+import unlockBtn from "@/assets/unlock-button.png.asset.json";
+import { VipDialog } from "@/components/vip-dialog";
 import promoBanner from "@/assets/promo-banner.png";
 import { AppFrame } from "@/components/app-frame";
 import { BrandIcon } from "@/components/brand-icon";
@@ -36,6 +39,7 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [vipOpen, setVipOpen] = useState(false);
   return (
     <AppFrame active="home">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
@@ -52,43 +56,24 @@ function Index() {
         </button>
       </header>
 
-      {/* Hero banner */}
-      <section className="relative mt-4 h-56 overflow-hidden rounded-2xl border border-border shadow-card">
+      {/* VIP hero banner */}
+      <section className="relative mt-4 aspect-[1672/941] w-full overflow-hidden rounded-2xl border border-border shadow-card">
         <img
-          src={heroBanner}
-          alt="Free Fire gamer in black and yellow gear"
-          width={1920}
-          height={768}
-          className="absolute inset-0 h-full w-full object-cover object-right"
+          src={vipHero.url}
+          alt="Unlock VIP Sensi — NOX 7T"
+          className="absolute inset-0 h-full w-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/40 to-transparent" />
-        <div className="relative flex h-full flex-col justify-center gap-2 p-4">
-          <span className="font-display text-lg font-extrabold italic tracking-tight drop-shadow">
-            FREE FIRE
-          </span>
-          <h1 className="font-display text-[1.3rem] font-extrabold italic leading-[1.15] tracking-tight">
-            FIND YOUR
-            <br />
-            <span className="text-primary">PERFECT SENSITIVITY</span>
-          </h1>
-          <p className="text-[11px] font-medium text-foreground/80">
-            Better Settings · More Headshots · Win More
-          </p>
-          <Link
-            to="/brand/$brand"
-            params={{ brand: "samsung" }}
-            className="mt-1.5 flex w-fit items-center gap-2 rounded-lg bg-primary px-5 py-2.5 font-display text-sm font-extrabold tracking-wide text-primary-foreground shadow-glow transition-transform active:scale-[0.98]"
-          >
-            GET STARTED <ArrowRight className="h-4 w-4" strokeWidth={2.5} />
-          </Link>
-        </div>
-        <div className="absolute bottom-3 right-4 flex items-center gap-1.5">
-          <span className="h-1.5 w-4 rounded-full bg-primary" />
-          <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60" />
-          <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60" />
-          <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60" />
-        </div>
+        <h1 className="sr-only">NOX SENSI — Unlock VIP Sensi</h1>
+        <button
+          type="button"
+          onClick={() => setVipOpen(true)}
+          aria-label="Unlock VIP Sensi"
+          className="absolute bottom-[3%] left-[2%] w-[40%] animate-pulse transition-transform hover:scale-105 active:scale-95"
+        >
+          <img src={unlockBtn.url} alt="" className="w-full drop-shadow-lg" />
+        </button>
       </section>
+      <VipDialog open={vipOpen} onOpenChange={setVipOpen} />
 
       {/* Brand grid */}
       <section className="mt-5">
