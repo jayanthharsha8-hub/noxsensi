@@ -357,10 +357,111 @@ const rawBrands: Brand[] = [
   },
 ];
 
+
+/** Additional 2024–2026 models; merged by id/name (duplicates skipped). */
+const extraModels: Record<string, DeviceModel[]> = {
+  samsung: [
+    m("galaxy-z-trifold", "Galaxy Z TriFold", 2025, "SM-F968B", ["16GB"], "black"),
+    m("galaxy-a07", "Galaxy A07", 2025, "SM-A075F", ["4GB", "6GB"], "black"),
+    m("galaxy-a57", "Galaxy A57", 2026, "SM-A576B", ["8GB", "12GB"], "blue"),
+    m("galaxy-a37", "Galaxy A37", 2026, "SM-A376B", ["6GB", "8GB"], "purple"),
+    m("galaxy-s26-plus", "Galaxy S26+", 2026, "SM-S947B", ["12GB"], "black"),
+    m("galaxy-m56", "Galaxy M56", 2025, "SM-M566B", ["8GB"], "green"),
+    m("galaxy-f56", "Galaxy F56", 2025, "SM-E566B", ["8GB"], "green"),
+  ],
+  xiaomi: [
+    m("redmi-note-15", "Redmi Note 15", 2026, "25120RN", ["6GB", "8GB"], "black"),
+    m("redmi-note-15-pro-plus", "Redmi Note 15 Pro+", 2026, "25120RP", ["8GB", "12GB"], "silver"),
+    m("redmi-note-14-pro", "Redmi Note 14 Pro", 2025, "24115RA8EG", ["8GB", "12GB"], "purple"),
+    m("redmi-14c", "Redmi 14C", 2024, "2409BRN2CG", ["4GB", "6GB", "8GB"], "blue"),
+    m("redmi-a5", "Redmi A5", 2025, "25028RN03", ["3GB", "4GB"], "green"),
+    m("xiaomi-15-ultra", "Xiaomi 15 Ultra", 2025, "25010PN30G", ["16GB"], "silver"),
+    m("xiaomi-15t", "Xiaomi 15T", 2025, "25069PTEBG", ["12GB"], "black"),
+    m("redmi-15", "Redmi 15", 2025, "25057RN09", ["6GB", "8GB"], "blue"),
+  ],
+  realme: [
+    m("realme-16-pro", "realme 16 Pro", 2026, "RMX5120", ["8GB", "12GB"], "orange"),
+    m("realme-p4", "realme P4", 2025, "RMX5085", ["6GB", "8GB"], "blue"),
+    m("realme-p4-pro", "realme P4 Pro", 2025, "RMX5090", ["8GB", "12GB"], "green"),
+    m("realme-gt-7", "realme GT 7", 2025, "RMX5061", ["12GB", "16GB"], "black"),
+    m("realme-15t", "realme 15T", 2025, "RMX5111", ["8GB", "12GB"], "silver"),
+    m("realme-c71", "realme C71", 2025, "RMX5020", ["4GB", "6GB"], "lime"),
+    m("realme-narzo-80x", "realme Narzo 80x", 2025, "RMX5035", ["6GB", "8GB"], "blue"),
+  ],
+  oppo: [
+    m("reno-15-pro", "Reno15 Pro 5G", 2026, "CPH2785", ["12GB"], "silver"),
+    m("reno-15", "Reno15 5G", 2026, "CPH2783", ["8GB", "12GB"], "blue"),
+    m("reno-15-f", "Reno15 F 5G", 2026, "CPH2791", ["8GB", "12GB"], "green"),
+    m("oppo-k13", "OPPO K13", 2025, "CPH2723", ["8GB"], "purple"),
+    m("oppo-f31-pro", "OPPO F31 Pro", 2025, "CPH2763", ["8GB", "12GB"], "black"),
+    m("oppo-a5x", "OPPO A5x", 2025, "CPH2739", ["4GB", "6GB"], "blue"),
+  ],
+  oneplus: [
+    m("oneplus-turbo-6", "OnePlus Turbo 6", 2026, "PLU110", ["12GB", "16GB"], "black"),
+    m("oneplus-turbo-6v", "OnePlus Turbo 6V", 2026, "PLU120", ["12GB"], "silver"),
+    m("oneplus-13", "OnePlus 13", 2025, "CPH2649", ["12GB", "16GB"], "blue"),
+    m("oneplus-13r", "OnePlus 13R", 2025, "CPH2691", ["12GB", "16GB"], "black"),
+    m("oneplus-nord-ce4", "OnePlus Nord CE4", 2024, "CPH2613", ["8GB"], "green"),
+  ],
+  vivo: [
+    m("vivo-x200t", "vivo X200T", 2026, "V2561", ["12GB", "16GB"], "black"),
+    m("vivo-v50", "vivo V50", 2025, "V2427", ["8GB", "12GB"], "purple"),
+    m("vivo-t4-ultra", "vivo T4 Ultra", 2025, "V2507", ["8GB", "12GB"], "silver"),
+    m("vivo-y39", "vivo Y39", 2025, "V2444", ["8GB"], "blue"),
+    m("vivo-v60e", "vivo V60e", 2025, "V2525", ["8GB", "12GB"], "green"),
+  ],
+  iphone: [
+    m("iphone-17", "iPhone 17", 2025, "A3258", ["8GB"], "blue"),
+    m("iphone-17-pro", "iPhone 17 Pro", 2025, "A3256", ["12GB"], "orange"),
+    m("iphone-16", "iPhone 16", 2024, "A3081", ["8GB"], "blue"),
+    m("iphone-16-plus", "iPhone 16 Plus", 2024, "A3082", ["8GB"], "black"),
+    m("iphone-17e", "iPhone 17e", 2026, "A3400", ["8GB"], "silver"),
+  ],
+  iqoo: [
+    m("iqoo-13", "iQOO 13", 2024, "I2401", ["12GB", "16GB"], "green"),
+    m("iqoo-neo-10", "iQOO Neo 10", 2025, "I2403", ["8GB", "12GB", "16GB"], "orange"),
+    m("iqoo-z10", "iQOO Z10", 2025, "I2408", ["8GB", "12GB"], "blue"),
+    m("iqoo-z10r", "iQOO Z10R", 2025, "I2410", ["8GB", "12GB"], "silver"),
+    m("iqoo-15r", "iQOO 15R", 2026, "I2601", ["12GB", "16GB"], "black"),
+  ],
+  motorola: [
+    m("razr-fold", "Motorola Razr Fold", 2026, "XT2701", ["16GB"], "black"),
+    m("moto-g06", "Moto G06", 2025, "XT2535", ["4GB"], "green"),
+    m("moto-g67", "Moto G67", 2025, "XT2561", ["8GB"], "blue"),
+    m("edge-60-pro", "Edge 60 Pro", 2025, "XT2503", ["8GB", "12GB"], "purple"),
+    m("edge-70-ultra", "Edge 70 Ultra", 2026, "XT2603", ["12GB", "16GB"], "silver"),
+  ],
+  "google-pixel": [
+    m("pixel-10-pro", "Pixel 10 Pro", 2025, "GVU6C", ["16GB"], "silver"),
+    m("pixel-10-pro-fold", "Pixel 10 Pro Fold", 2025, "GC15S", ["16GB"], "black"),
+    m("pixel-9", "Pixel 9", 2024, "G2YBB", ["12GB"], "green"),
+    m("pixel-9a", "Pixel 9a", 2025, "GTF7P", ["8GB"], "purple"),
+  ],
+  poco: [
+    m("poco-m8", "POCO M8", 2026, "25120PCM8", ["6GB", "8GB"], "black"),
+    m("poco-m8-pro", "POCO M8 Pro 5G", 2026, "25120PCM8P", ["8GB", "12GB"], "lime"),
+    m("poco-x7", "POCO X7", 2025, "24095PCADG", ["8GB", "12GB"], "silver"),
+    m("poco-f7", "POCO F7", 2025, "25053PC47G", ["12GB"], "black"),
+    m("poco-c75", "POCO C75", 2024, "2410FPCC5G", ["4GB", "6GB"], "green"),
+  ],
+  infinix: [
+    m("infinix-gt-30-pro", "GT 30 Pro", 2025, "X6873", ["8GB", "12GB"], "black"),
+    m("infinix-gt-30-5g-plus", "GT 30 5G+", 2025, "X6871", ["8GB"], "lime"),
+    m("infinix-smart-10", "Smart 10", 2025, "X6725", ["4GB"], "blue"),
+    m("infinix-zero-40", "Zero 40", 2024, "X6860B", ["12GB"], "silver"),
+    m("infinix-hot-50-pro-plus", "Hot 50 Pro+", 2024, "X6880P", ["8GB"], "purple"),
+  ],
+};
+
 /** Latest models first (2026 → older). */
 export const brands: Brand[] = rawBrands.map((b) => ({
   ...b,
-  models: [...b.models].sort((a, z) => z.year - a.year),
+  models: [
+    ...b.models,
+    ...(extraModels[b.id] ?? []).filter(
+      (x) => !b.models.some((y) => y.id === x.id || y.name.toLowerCase() === x.name.toLowerCase()),
+    ),
+  ].sort((a, z) => z.year - a.year),
 }));
 
 export function getBrand(brandId: string): Brand | undefined {
