@@ -1,11 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Bell, Crosshair } from "lucide-react";
+import { Bell } from "lucide-react";
 
 import { useState } from "react";
 import vipHero from "@/assets/vip-hero.png.asset.json";
-import unlockBtn from "@/assets/unlock-button.png.asset.json";
+import unlockBtn from "@/assets/unlock-button-v2.png.asset.json";
 import { VipDialog } from "@/components/vip-dialog";
-import promoBanner from "@/assets/promo-banner.png";
 import { AppFrame } from "@/components/app-frame";
 import { BrandIcon } from "@/components/brand-icon";
 import { NoxLogo } from "@/components/nox-logo";
@@ -102,46 +101,23 @@ function Index() {
         </div>
       </section>
 
-      {/* Performance promo */}
-      <section className="relative mt-5 h-40 overflow-hidden rounded-2xl border border-border shadow-card">
-        <img
-          src={promoBanner}
-          alt=""
-          loading="lazy"
-          width={1920}
-          height={512}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 bg-background/30" />
-        <span
-          aria-hidden="true"
-          className="absolute right-2 top-2 h-9 w-9 rounded-tr-xl border-r-[3px] border-t-[3px] border-primary"
-        />
-        <span
-          aria-hidden="true"
-          className="absolute bottom-2 left-2 h-9 w-9 rounded-bl-xl border-b-[3px] border-l-[3px] border-primary"
-        />
-        <div className="relative flex h-full items-center gap-3 p-5">
-          <Crosshair className="h-10 w-10 shrink-0 text-primary" strokeWidth={2} />
-          <div className="min-w-0 flex-1">
-            <p className="text-base font-bold leading-tight">Target Your</p>
-            <p className="font-display text-xl font-extrabold italic leading-tight text-primary">
-              PERFORMANCE
-            </p>
-            <p className="mt-1.5 text-[10px] font-medium text-foreground/80">
-              Right Settings · Better Control · More Headshots
-            </p>
-          </div>
-          <div className="flex shrink-0 flex-col items-center pr-1">
-            <span className="font-display text-3xl font-black italic leading-none text-primary">
-              F
-            </span>
-            <span className="mt-0.5 font-display text-[10px] font-extrabold italic tracking-tight text-primary">
-              FREE FIRE
-            </span>
-          </div>
-        </div>
-      </section>
+      {/* VIP breaking news ticker */}
+      <button
+        type="button"
+        onClick={() => setVipOpen(true)}
+        aria-label="Unlock VIP Sensi"
+        className="mt-5 flex w-full items-stretch overflow-hidden rounded-xl border border-primary/40 bg-background text-left"
+      >
+        <span className="z-10 flex shrink-0 items-center bg-primary px-3 font-display text-[11px] font-extrabold uppercase tracking-wider text-primary-foreground">
+          Breaking
+        </span>
+        <span className="relative flex-1 overflow-hidden py-2.5">
+          <span className="nox-ticker-track flex w-max whitespace-nowrap font-display text-xs font-bold uppercase tracking-wide text-foreground">
+            <span className="pr-4">UNLOCK NOX 7T VIP SENSI NOW  •  EXCLUSIVE TOURNAMENT-LEVEL SENSITIVITY  •  SUBSCRIBE ON YOUTUBE, FOLLOW ON INSTAGRAM & JOIN OUR WHATSAPP CHANNEL FOR YOUR PASSCODE  •  </span>
+            <span className="pr-4" aria-hidden="true">UNLOCK NOX 7T VIP SENSI NOW  •  EXCLUSIVE TOURNAMENT-LEVEL SENSITIVITY  •  SUBSCRIBE ON YOUTUBE, FOLLOW ON INSTAGRAM & JOIN OUR WHATSAPP CHANNEL FOR YOUR PASSCODE  •  </span>
+          </span>
+        </span>
+      </button>
     </AppFrame>
   );
 }
