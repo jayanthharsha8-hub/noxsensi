@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { VipLoader } from "@/components/vip-loader";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DEFAULT_LINKS, getLinks, redeemPasscode } from "@/lib/admin";
 
@@ -13,6 +14,8 @@ export function VipDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
   const [status, setStatus] = useState<"idle" | "ok" | keyof typeof MSG>("idle");
   const [links, setLinksState] = useState(DEFAULT_LINKS);
   useEffect(() => { if (open) setLinksState(getLinks()); }, [open]);
+  const [loading, setLoading] = useState(false);
+  const finish = useCallback(() => setLoading(false), []);
 
   const items = [
     { label: "Subscribe on YouTube", href: links.youtube },
@@ -23,11 +26,13 @@ export function VipDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
     const r = redeemPasscode(code);
-    if (r === "ok") localStorage.setItem("nox-vip", "1");
+    if (r === "ok") { localStorage.setItem("nox-vip", "1"); onOpenChange(false); setLoading(true); }
     setStatus(r);
   };
 
   return (
+    <>
+    {loading && <VipLoader onDone={finish} />}
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="border-primary/40 bg-card">
         <DialogHeader>
@@ -51,5 +56,6 @@ export function VipDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
         {status !== "ok" && status !== "idle" && <p className="text-sm text-destructive">{MSG[status]}</p>}
       </DialogContent>
     </Dialog>
+    </>
   );
 }
