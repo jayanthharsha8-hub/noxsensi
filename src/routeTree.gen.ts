@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as DpiRouteImport } from './routes/dpi'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as SaveRouteImport } from './routes/save'
@@ -20,6 +21,11 @@ import { Route as BrandBrandModelRouteImport } from './routes/brand.$brand.$mode
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DpiRoute = DpiRouteImport.update({
@@ -55,6 +61,7 @@ const BrandBrandModelRoute = BrandBrandModelRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/dpi': typeof DpiRoute
   '/help': typeof HelpRoute
   '/save': typeof SaveRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/dpi': typeof DpiRoute
   '/help': typeof HelpRoute
   '/save': typeof SaveRoute
@@ -73,6 +81,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRoute
   '/dpi': typeof DpiRoute
   '/help': typeof HelpRoute
   '/save': typeof SaveRoute
@@ -84,6 +93,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/dpi'
     | '/help'
     | '/save'
@@ -92,10 +102,17 @@ export interface FileRouteTypes {
     | '/brand/$brand/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/dpi' | '/help' | '/save' | '/brand/$brand/$model' | '/brand/$brand'
+    | '/'
+    | '/admin'
+    | '/dpi'
+    | '/help'
+    | '/save'
+    | '/brand/$brand/$model'
+    | '/brand/$brand'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/dpi'
     | '/help'
     | '/save'
@@ -106,6 +123,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRoute
   DpiRoute: typeof DpiRoute
   HelpRoute: typeof HelpRoute
   SaveRoute: typeof SaveRoute
@@ -119,6 +137,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dpi': {
@@ -182,6 +207,7 @@ const BrandBrandRouteWithChildren = BrandBrandRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRoute,
   DpiRoute: DpiRoute,
   HelpRoute: HelpRoute,
   SaveRoute: SaveRoute,

@@ -1,4 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useRef } from "react";
 import { CircleHelp } from "lucide-react";
 
 import { AppFrame } from "@/components/app-frame";
@@ -44,6 +45,13 @@ export const Route = createFileRoute("/help")({
 });
 
 function HelpPage() {
+  const navigate = useNavigate();
+  const taps = useRef<number[]>([]);
+  const tap = () => {
+    const now = Date.now();
+    taps.current = [...taps.current.filter((t) => now - t < 2000), now];
+    if (taps.current.length >= 5) { taps.current = []; navigate({ to: "/admin" }); }
+  };
   return (
     <AppFrame active="help">
       <header className="flex items-center gap-3">
@@ -52,7 +60,9 @@ function HelpPage() {
 
       <section className="mt-4 rounded-2xl border border-border bg-card p-4 shadow-card">
         <div className="flex items-center gap-3">
-          <CircleHelp className="h-7 w-7 text-primary" strokeWidth={2.2} />
+          <button type="button" aria-label="Help" onClick={tap} className="shrink-0">
+            <CircleHelp className="h-7 w-7 text-primary" strokeWidth={2.2} />
+          </button>
           <div className="min-w-0">
             <h1 className="font-display text-lg font-extrabold uppercase tracking-wide">
               Help & FAQ

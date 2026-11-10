@@ -33,6 +33,7 @@ import {
   type SensitivityResult,
 } from "@/lib/sensitivity";
 import { addSavedSetting, savedSettingId } from "@/lib/save";
+import { getOverride } from "@/lib/admin";
 
 const ROW_ICONS = [User, Crosshair, Focus, ScanEye, Telescope];
 
@@ -89,7 +90,7 @@ function Generator() {
   };
 
   const generate = () => {
-    setResult(generateSensitivity(brandId, model.name, ram, roll));
+    setResult(getOverride(brandId, model.id) ?? generateSensitivity(brandId, model.name, ram, roll));
     setRoll((n) => n + 1);
     setSaved(false);
   };
