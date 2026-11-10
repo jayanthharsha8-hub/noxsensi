@@ -89,7 +89,7 @@ function SensitivityEditor() {
         {brands.map((b) => (
           <button key={b.id} onClick={() => { setBrandId(b.id); setModelId(""); }}
             className={`rounded-lg border px-1 py-2 text-[11px] font-bold ${b.id === brandId ? "border-primary text-primary" : "border-border"}`}>
-            {b.name}
+            {b.label}
           </button>
         ))}
       </div>
