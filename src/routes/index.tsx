@@ -5,6 +5,8 @@ import { useState } from "react";
 import vipHero from "@/assets/vip-hero.png.asset.json";
 import unlockBtn from "@/assets/unlock-button-v2.png.asset.json";
 import { VipDialog } from "@/components/vip-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { getLinks } from "@/lib/admin";
 import { AppFrame } from "@/components/app-frame";
 import { BrandIcon } from "@/components/brand-icon";
 import { NoxLogo } from "@/components/nox-logo";
@@ -39,6 +41,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const [vipOpen, setVipOpen] = useState(false);
+  const [bellOpen, setBellOpen] = useState(false);
   return (
     <AppFrame active="home">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
@@ -46,6 +49,7 @@ function Index() {
         <button
           type="button"
           aria-label="Notifications"
+          onClick={() => setBellOpen(true)}
           className="relative mt-1 grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-border bg-card/60"
         >
           <Bell className="h-5 w-5" />
@@ -73,6 +77,19 @@ function Index() {
         </button>
       </section>
       <VipDialog open={vipOpen} onOpenChange={setVipOpen} />
+      <Dialog open={bellOpen} onOpenChange={setBellOpen}>
+        <DialogContent className="border-primary/40 bg-card">
+          <DialogHeader>
+            <DialogTitle className="font-display text-primary">🔔 Updates</DialogTitle>
+            <DialogDescription>Latest news from NOX 7T</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-2 text-sm">
+            <div className="rounded-lg border border-border bg-secondary p-3">🔥 New 2025–2026 phones added for all 12 brands.</div>
+            <button type="button" onClick={() => { setBellOpen(false); setVipOpen(true); }} className="rounded-lg border border-border bg-secondary p-3 text-left">👑 VIP Tournament Sensi is live — tap to unlock.</button>
+            <a href={getLinksSafe().whatsapp} target="_blank" rel="noreferrer" className="rounded-lg border border-primary/50 bg-secondary p-3">📢 New VIP passcodes drop in our WhatsApp channel — join now.</a>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Brand grid */}
       <section className="mt-5">
@@ -120,4 +137,8 @@ function Index() {
       </button>
     </AppFrame>
   );
+}
+
+function getLinksSafe() {
+  return typeof window === "undefined" ? { whatsapp: "https://whatsapp.com/channel/0029Vb94mKa3LdQTLI6AOL2z" } : getLinks();
 }

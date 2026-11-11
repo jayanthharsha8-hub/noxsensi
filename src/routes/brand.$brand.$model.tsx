@@ -1,4 +1,6 @@
 import { useEffect, useState } from "react";
+import { Share2 } from "lucide-react";
+import { shareSensi } from "@/lib/share";
 import {
   createFileRoute,
   Link,
@@ -68,6 +70,8 @@ function Generator() {
   const [result, setResult] = useState<SensitivityResult | null>(null);
   const [roll, setRoll] = useState(0);
   const [saved, setSaved] = useState(false);
+  const [fire, setFire] = useState(48);
+  const [shareMsg, setShareMsg] = useState("");
 
   // Reset RAM + result when the selected model changes.
   useEffect(() => {
@@ -92,6 +96,8 @@ function Generator() {
   const generate = () => {
     setResult(getOverride(brandId, model.id) ?? generateSensitivity(brandId, model.name, ram, roll));
     setRoll((n) => n + 1);
+    setFire(Math.round(42 + Math.random() * 13));
+    setShareMsg("");
     setSaved(false);
   };
 
@@ -268,6 +274,32 @@ function Generator() {
               );
             })}
           </div>
+
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <div className="rounded-xl border border-border bg-secondary/60 p-3 text-center">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Fire Button Size</p>
+              <p className="font-display text-2xl font-extrabold text-primary">{fire}%</p>
+            </div>
+            <div className="rounded-xl border border-border bg-secondary/60 p-3 text-[11px] leading-snug">
+              <p className="font-bold text-primary">Drag Tip</p>
+              <p className="text-muted-foreground">Short straight drag up for headshots; rotate drag in close range.</p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={async () => {
+              const r = await shareSensi(`${model.name} (${ram}) Sensi`, [
+                ...SENSITIVITY_ORDER.map((k) => `${SENSITIVITY_RANGES[k].label}: ${result[k]}`),
+                `Fire Button: ${fire}%`,
+              ]);
+              setShareMsg(r === "copied" ? "Copied! Paste it in WhatsApp" : r === "failed" ? "Could not share" : "");
+            }}
+            className="mt-3 flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary font-display text-sm font-extrabold uppercase tracking-wide text-primary-foreground"
+          >
+            <Share2 className="h-4 w-4" /> Share with Squad
+          </button>
+          {shareMsg && <p className="mt-1 text-center text-xs text-primary">{shareMsg}</p>}
 
           <button
             type="button"

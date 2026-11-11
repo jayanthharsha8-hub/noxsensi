@@ -14,9 +14,14 @@ export function VipDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
   const [code, setCode] = useState("");
   const [status, setStatus] = useState<"idle" | "ok" | keyof typeof MSG>("idle");
   const [links, setLinksState] = useState(DEFAULT_LINKS);
-  useEffect(() => { if (open) setLinksState(getLinks()); }, [open]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  useEffect(() => {
+    if (!open) return;
+    // Already unlocked on this phone: skip the passcode and go straight to VIP.
+    if (localStorage.getItem("nox-vip") === "1") { onOpenChange(false); navigate({ to: "/vip" }); return; }
+    setLinksState(getLinks());
+  }, [open, onOpenChange, navigate]);
   const finish = useCallback(() => { setLoading(false); navigate({ to: "/vip" }); }, [navigate]);
 
   const items = [

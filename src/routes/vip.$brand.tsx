@@ -1,5 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
+import { shareSensi } from "@/lib/share";
 import { ArrowLeft, Crown } from "lucide-react";
 import { AppFrame } from "@/components/app-frame";
 import { getBrand, type DeviceModel } from "@/data/devices";
@@ -28,6 +29,7 @@ function VipBrand() {
   const [ram, setRam] = useState("");
   const [res, setRes] = useState<VipResult | null>(null);
   const [saved, setSaved] = useState(false);
+  const [msg, setMsg] = useState("");
 
   const pick = (m: DeviceModel) => { setModel(m); setRam(m.ramOptions[m.ramOptions.length - 1] ?? "8GB"); setRes(null); setSaved(false); };
   const save = () => {
@@ -85,6 +87,9 @@ function VipBrand() {
               <button onClick={save} disabled={saved} className="w-full rounded-xl border border-vip-gold py-2.5 text-sm font-bold text-vip-gold">
                 {saved ? "Saved ✓" : "Save VIP Sensi"}
               </button>
+              <button onClick={async () => { const r = await shareSensi(`VIP ${model.name} (${ram})`, [...ROWS.map(([k, l]) => `${l}: ${res[k]}`), `Fire Button: ${res.fireButton}%`, `Drag DPI: ${res.dpi}`]); setMsg(r === "copied" ? "Copied! Paste it in WhatsApp" : r === "failed" ? "Could not share" : ""); }}
+                className="vip-bar w-full rounded-xl py-2.5 text-sm font-black text-background">Share with Squad</button>
+              {msg && <p className="text-center text-xs text-vip-gold">{msg}</p>}
               <p className="text-[10px] text-muted-foreground">Ranges: General {VIP_RANGES.general.join("–")}, Fire button {VIP_RANGES.fireButton.join("–")}%</p>
             </div>
           )}

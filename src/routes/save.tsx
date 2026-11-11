@@ -12,6 +12,9 @@ import {
   type SavedSetting,
 } from "@/lib/save";
 
+interface VipSaved { brand: string; model: string; ram: string; general: number; redDot: number; scope2x: number; scope4x: number; sniper: number; fireButton: number; dpi: number; at: number }
+const VIP_ROWS: [keyof VipSaved, string][] = [["general", "General"], ["redDot", "Red Dot"], ["scope2x", "2x"], ["scope4x", "4x"], ["sniper", "Sniper"]];
+
 export const Route = createFileRoute("/save")({
   head: () => ({
     meta: [
@@ -34,11 +37,15 @@ export const Route = createFileRoute("/save")({
 
 function SavePage() {
   const [saved, setSaved] = useState<SavedSetting[] | null>(null);
+  const [vip, setVip] = useState<VipSaved[]>([]);
+  const [tab, setTab] = useState<"all" | "normal" | "vip">("all");
 
   // Read localStorage after mount (SSR-safe).
   useEffect(() => {
     setSaved(loadSavedSettings());
+    try { setVip(JSON.parse(localStorage.getItem("nox-vip-saved") || "[]")); } catch { setVip([]); }
   }, []);
+  const delVip = (i: number) => { const n = vip.filter((_, j) => j !== i); setVip(n); localStorage.setItem("nox-vip-saved", JSON.stringify(n)); };
 
   const del = (id: string) => setSaved(removeSavedSetting(id));
 
@@ -48,7 +55,42 @@ function SavePage() {
         <NoxLogo compact />
       </header>
 
-      {saved === null || saved.length === 0 ? (
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        {(["all", "normal", "vip"] as const).map((t) => (
+          <button key={t} type="button" onClick={() => setTab(t)}
+            className={`rounded-lg border py-2 font-display text-xs font-extrabold uppercase ${tab === t ? (t === "vip" ? "border-vip-gold bg-vip-gold text-background" : "border-primary bg-primary text-primary-foreground") : "border-border bg-card text-muted-foreground"}`}>
+            {t === "vip" ? "👑 VIP" : t}
+          </button>
+        ))}
+      </div>
+
+      {tab !== "normal" && vip.length > 0 && (
+        <section className="mt-4 space-y-3">
+          {vip.map((v, i) => (
+            <article key={`${v.at}-${i}`} className="rounded-2xl border border-vip-gold bg-card p-4">
+              <div className="flex items-center gap-3">
+                <div className="min-w-0 flex-1">
+                  <p className="vip-gold-text break-words text-sm font-black">👑 {v.model}</p>
+                  <p className="text-xs text-muted-foreground">{v.brand} · {v.ram} RAM</p>
+                </div>
+                <button type="button" onClick={() => delVip(i)} aria-label={`Remove VIP ${v.model}`} className="grid h-9 w-9 place-items-center rounded-full border border-border text-muted-foreground"><Trash2 className="h-4 w-4" /></button>
+              </div>
+              <div className="mt-3 grid grid-cols-5 gap-2">
+                {VIP_ROWS.map(([k, l]) => (
+                  <div key={k} className="rounded-lg border border-vip-gold/40 p-2 text-center">
+                    <p className="text-[9px] uppercase text-muted-foreground">{l}</p>
+                    <p className="font-extrabold text-vip-gold">{v[k]}</p>
+                    <div className="mt-1 h-1 rounded-full bg-muted"><div className="vip-bar h-full rounded-full" style={{ width: `${Math.min(100, (Number(v[k]) / 200) * 100)}%` }} /></div>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-2 text-xs text-muted-foreground">Fire Button <b className="text-vip-gold">{v.fireButton}%</b> · Drag DPI <b className="text-vip-gold">{v.dpi}</b></p>
+            </article>
+          ))}
+        </section>
+      )}
+
+      {tab === "vip" ? (vip.length === 0 && <p className="mt-10 text-center text-sm text-muted-foreground">No VIP sensi saved yet.</p>) : saved === null || saved.length === 0 ? (tab === "all" && vip.length > 0 ? null : (
         <section className="mt-10 flex flex-col items-center gap-3 rounded-2xl border border-border bg-card p-8 text-center shadow-card">
           <span className="grid h-14 w-14 place-items-center rounded-2xl border border-border bg-secondary">
             <Bookmark className="h-6 w-6 text-primary" />
@@ -67,7 +109,7 @@ function SavePage() {
             <Zap className="h-4 w-4" /> GENERATE NOW
           </Link>
         </section>
-      ) : (
+      )) : (
         <section className="mt-4 space-y-3">
           <h1 className="font-display text-lg font-extrabold uppercase tracking-wide">
             Saved Settings
