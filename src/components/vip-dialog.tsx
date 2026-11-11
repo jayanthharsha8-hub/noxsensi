@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { VipLoader } from "@/components/vip-loader";
+import { useNavigate } from "@tanstack/react-router";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { DEFAULT_LINKS, getLinks, redeemPasscode } from "@/lib/admin";
 
@@ -15,7 +16,8 @@ export function VipDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
   const [links, setLinksState] = useState(DEFAULT_LINKS);
   useEffect(() => { if (open) setLinksState(getLinks()); }, [open]);
   const [loading, setLoading] = useState(false);
-  const finish = useCallback(() => setLoading(false), []);
+  const navigate = useNavigate();
+  const finish = useCallback(() => { setLoading(false); navigate({ to: "/vip" }); }, [navigate]);
 
   const items = [
     { label: "Subscribe on YouTube", href: links.youtube },

@@ -14,7 +14,10 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as DpiRouteImport } from './routes/dpi'
 import { Route as HelpRouteImport } from './routes/help'
 import { Route as SaveRouteImport } from './routes/save'
+import { Route as VipRouteImport } from './routes/vip'
 import { Route as BrandBrandRouteImport } from './routes/brand.$brand'
+import { Route as VipIndexRouteImport } from './routes/vip.index'
+import { Route as VipBrandRouteImport } from './routes/vip.$brand'
 import { Route as BrandBrandIndexRouteImport } from './routes/brand.$brand.index'
 import { Route as BrandBrandModelRouteImport } from './routes/brand.$brand.$model'
 
@@ -43,10 +46,25 @@ const SaveRoute = SaveRouteImport.update({
   path: '/save',
   getParentRoute: () => rootRouteImport,
 } as any)
+const VipRoute = VipRouteImport.update({
+  id: '/vip',
+  path: '/vip',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BrandBrandRoute = BrandBrandRouteImport.update({
   id: '/brand/$brand',
   path: '/brand/$brand',
   getParentRoute: () => rootRouteImport,
+} as any)
+const VipIndexRoute = VipIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => VipRoute,
+} as any)
+const VipBrandRoute = VipBrandRouteImport.update({
+  id: '/$brand',
+  path: '/$brand',
+  getParentRoute: () => VipRoute,
 } as any)
 const BrandBrandIndexRoute = BrandBrandIndexRouteImport.update({
   id: '/',
@@ -65,7 +83,10 @@ export interface FileRoutesByFullPath {
   '/dpi': typeof DpiRoute
   '/help': typeof HelpRoute
   '/save': typeof SaveRoute
+  '/vip': typeof VipRouteWithChildren
   '/brand/$brand': typeof BrandBrandRouteWithChildren
+  '/vip/$brand': typeof VipBrandRoute
+  '/vip/': typeof VipIndexRoute
   '/brand/$brand/$model': typeof BrandBrandModelRoute
   '/brand/$brand/': typeof BrandBrandIndexRoute
 }
@@ -75,6 +96,8 @@ export interface FileRoutesByTo {
   '/dpi': typeof DpiRoute
   '/help': typeof HelpRoute
   '/save': typeof SaveRoute
+  '/vip/$brand': typeof VipBrandRoute
+  '/vip': typeof VipIndexRoute
   '/brand/$brand/$model': typeof BrandBrandModelRoute
   '/brand/$brand': typeof BrandBrandIndexRoute
 }
@@ -85,7 +108,10 @@ export interface FileRoutesById {
   '/dpi': typeof DpiRoute
   '/help': typeof HelpRoute
   '/save': typeof SaveRoute
+  '/vip': typeof VipRouteWithChildren
   '/brand/$brand': typeof BrandBrandRouteWithChildren
+  '/vip/$brand': typeof VipBrandRoute
+  '/vip/': typeof VipIndexRoute
   '/brand/$brand/$model': typeof BrandBrandModelRoute
   '/brand/$brand/': typeof BrandBrandIndexRoute
 }
@@ -97,7 +123,10 @@ export interface FileRouteTypes {
     | '/dpi'
     | '/help'
     | '/save'
+    | '/vip'
     | '/brand/$brand'
+    | '/vip/$brand'
+    | '/vip/'
     | '/brand/$brand/$model'
     | '/brand/$brand/'
   fileRoutesByTo: FileRoutesByTo
@@ -107,6 +136,8 @@ export interface FileRouteTypes {
     | '/dpi'
     | '/help'
     | '/save'
+    | '/vip/$brand'
+    | '/vip'
     | '/brand/$brand/$model'
     | '/brand/$brand'
   id:
@@ -116,7 +147,10 @@ export interface FileRouteTypes {
     | '/dpi'
     | '/help'
     | '/save'
+    | '/vip'
     | '/brand/$brand'
+    | '/vip/$brand'
+    | '/vip/'
     | '/brand/$brand/$model'
     | '/brand/$brand/'
   fileRoutesById: FileRoutesById
@@ -127,6 +161,7 @@ export interface RootRouteChildren {
   DpiRoute: typeof DpiRoute
   HelpRoute: typeof HelpRoute
   SaveRoute: typeof SaveRoute
+  VipRoute: typeof VipRouteWithChildren
   BrandBrandRoute: typeof BrandBrandRouteWithChildren
 }
 
@@ -167,12 +202,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SaveRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/vip': {
+      id: '/vip'
+      path: '/vip'
+      fullPath: '/vip'
+      preLoaderRoute: typeof VipRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/brand/$brand': {
       id: '/brand/$brand'
       path: '/brand/$brand'
       fullPath: '/brand/$brand'
       preLoaderRoute: typeof BrandBrandRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/vip/': {
+      id: '/vip/'
+      path: '/'
+      fullPath: '/vip/'
+      preLoaderRoute: typeof VipIndexRouteImport
+      parentRoute: typeof VipRoute
+    }
+    '/vip/$brand': {
+      id: '/vip/$brand'
+      path: '/$brand'
+      fullPath: '/vip/$brand'
+      preLoaderRoute: typeof VipBrandRouteImport
+      parentRoute: typeof VipRoute
     }
     '/brand/$brand/': {
       id: '/brand/$brand/'
@@ -190,6 +246,18 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface VipRouteChildren {
+  VipBrandRoute: typeof VipBrandRoute
+  VipIndexRoute: typeof VipIndexRoute
+}
+
+const VipRouteChildren: VipRouteChildren = {
+  VipBrandRoute: VipBrandRoute,
+  VipIndexRoute: VipIndexRoute,
+}
+
+const VipRouteWithChildren = VipRoute._addFileChildren(VipRouteChildren)
 
 interface BrandBrandRouteChildren {
   BrandBrandModelRoute: typeof BrandBrandModelRoute
@@ -211,6 +279,7 @@ const rootRouteChildren: RootRouteChildren = {
   DpiRoute: DpiRoute,
   HelpRoute: HelpRoute,
   SaveRoute: SaveRoute,
+  VipRoute: VipRouteWithChildren,
   BrandBrandRoute: BrandBrandRouteWithChildren,
 }
 export const routeTree = rootRouteImport
