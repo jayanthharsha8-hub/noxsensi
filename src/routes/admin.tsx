@@ -7,7 +7,7 @@ import { NoxLogo } from "@/components/nox-logo";
 import { brands } from "@/data/devices";
 import {
   checkLogin, getAdmins, getLinks, getOverride, getPasscodes, setAdmins, setLinks, setOverride, setPasscodes,
-  DEFAULT_LINKS, type AdminUser, type Passcode,
+  DEFAULT_LINKS, getNotices, setNotices, type AdminUser, type Passcode, type Notice,
 } from "@/lib/admin";
 import { SENSITIVITY_ORDER, SENSITIVITY_RANGES, type SensitivityResult } from "@/lib/sensitivity";
 
@@ -63,7 +63,7 @@ function Panel({ onLogout }: { onLogout: () => void }) {
         <h1 className="font-display text-lg font-extrabold uppercase">Admin Panel</h1>
         <button onClick={onLogout} className="text-xs font-bold text-muted-foreground">Logout</button>
       </div>
-      <SensitivityEditor /><LinksEditor /><PasscodesEditor /><AdminsEditor />
+      <NoticesEditor /><SensitivityEditor /><LinksEditor /><PasscodesEditor /><AdminsEditor />
     </>
   );
 }
@@ -193,6 +193,31 @@ function AdminsEditor() {
         if (!u.trim() || !p || admins.some((a) => a.username === u.trim())) return;
         update([...admins, { username: u.trim(), password: p }]); setU(""); setP("");
       }}>Create Admin</button>
+    </section>
+  );
+}
+
+function NoticesEditor() {
+  const [list, setList] = useState<Notice[]>([]);
+  const [text, setText] = useState(""); const [link, setLink] = useState("");
+  useEffect(() => setList(getNotices()), []);
+  const update = (n: Notice[]) => { setList(n); setNotices(n); };
+  return (
+    <section className={card + " space-y-2"}>
+      <h2 className={h2}>Bell Notifications</h2>
+      {list.map((n, i) => (
+        <div key={n.id} className="flex items-center justify-between gap-2 rounded-lg border border-border bg-secondary/60 p-2 text-xs">
+          <div className="min-w-0"><p className="text-sm">{n.text}</p><p className="text-muted-foreground">{n.date}{n.link ? ` · ${n.link}` : ""}</p></div>
+          <button aria-label="Delete notification" onClick={() => update(list.filter((_, j) => j !== i))}><Trash2 className="h-4 w-4 text-destructive" /></button>
+        </div>
+      ))}
+      <textarea className={input} rows={2} placeholder="Notification message" value={text} onChange={(e) => setText(e.target.value)} />
+      <input className={input} placeholder="Link (optional): https://..., vip, or whatsapp" value={link} onChange={(e) => setLink(e.target.value)} />
+      <button className={btn} onClick={() => {
+        if (!text.trim()) return;
+        update([{ id: String(Date.now()), text: text.trim(), link: link.trim() || undefined, date: new Date().toISOString().slice(0, 10) }, ...list]);
+        setText(""); setLink("");
+      }}>Send Notification</button>
     </section>
   );
 }

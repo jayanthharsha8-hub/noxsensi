@@ -1,12 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Bell } from "lucide-react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import vipHero from "@/assets/vip-hero.png.asset.json";
 import unlockBtn from "@/assets/unlock-button-v2.png.asset.json";
 import { VipDialog } from "@/components/vip-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { getLinks } from "@/lib/admin";
+import { getLinks, getNotices, DEFAULT_NOTICES, type Notice } from "@/lib/admin";
 import { AppFrame } from "@/components/app-frame";
 import { BrandIcon } from "@/components/brand-icon";
 import { NoxLogo } from "@/components/nox-logo";
@@ -42,6 +42,8 @@ export const Route = createFileRoute("/")({
 function Index() {
   const [vipOpen, setVipOpen] = useState(false);
   const [bellOpen, setBellOpen] = useState(false);
+  const [notices, setNoticeList] = useState<Notice[]>(DEFAULT_NOTICES);
+  useEffect(() => setNoticeList(getNotices()), [bellOpen]);
   return (
     <AppFrame active="home">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
@@ -54,7 +56,7 @@ function Index() {
         >
           <Bell className="h-5 w-5" />
           <span className="absolute -right-1 -top-1 grid h-4 min-w-4 place-items-center rounded-full bg-primary px-1 text-[10px] font-bold leading-none text-primary-foreground">
-            3
+            {notices.length}
           </span>
         </button>
       </header>
@@ -84,9 +86,14 @@ function Index() {
             <DialogDescription>Latest news from NOX 7T</DialogDescription>
           </DialogHeader>
           <div className="grid gap-2 text-sm">
-            <div className="rounded-lg border border-border bg-secondary p-3">🔥 New 2025–2026 phones added for all 12 brands.</div>
-            <button type="button" onClick={() => { setBellOpen(false); setVipOpen(true); }} className="rounded-lg border border-border bg-secondary p-3 text-left">👑 VIP Tournament Sensi is live — tap to unlock.</button>
-            <a href={getLinksSafe().whatsapp} target="_blank" rel="noreferrer" className="rounded-lg border border-primary/50 bg-secondary p-3">📢 New VIP passcodes drop in our WhatsApp channel — join now.</a>
+            {notices.length === 0 && <p className="text-muted-foreground">No updates yet.</p>}
+            {notices.map((n) => n.link === "vip" ? (
+              <button key={n.id} type="button" onClick={() => { setBellOpen(false); setVipOpen(true); }} className="rounded-lg border border-border bg-secondary p-3 text-left">{n.text}</button>
+            ) : n.link ? (
+              <a key={n.id} href={n.link === "whatsapp" ? getLinksSafe().whatsapp : n.link} target="_blank" rel="noreferrer" className="rounded-lg border border-primary/50 bg-secondary p-3">{n.text}</a>
+            ) : (
+              <div key={n.id} className="rounded-lg border border-border bg-secondary p-3">{n.text}</div>
+            ))}
           </div>
         </DialogContent>
       </Dialog>

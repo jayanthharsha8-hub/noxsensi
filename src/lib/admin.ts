@@ -57,3 +57,12 @@ export function setOverride(b: string, m: string, v: SensitivityResult | null) {
   if (v) o[okey(b, m)] = v; else delete o[okey(b, m)];
   write(K.sens, o);
 }
+
+export type Notice = { id: string; text: string; link?: string; date: string };
+export const DEFAULT_NOTICES: Notice[] = [
+  { id: "n1", text: "🔥 New 2025–2026 phones added for all 12 brands.", date: "2026-11-01" },
+  { id: "n2", text: "👑 VIP Tournament Sensi is live — tap to unlock.", link: "vip", date: "2026-11-01" },
+  { id: "n3", text: "📢 New VIP passcodes drop in our WhatsApp channel — join now.", link: "whatsapp", date: "2026-11-01" },
+];
+export const getNotices = () => read<Notice[]>("nox-notices", DEFAULT_NOTICES);
+export const setNotices = (n: Notice[]) => write("nox-notices", n);
