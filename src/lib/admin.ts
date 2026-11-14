@@ -58,7 +58,7 @@ export function setOverride(b: string, m: string, v: SensitivityResult | null) {
   write(K.sens, o);
 }
 
-export type Notice = { id: string; text: string; link?: string; date: string };
+export type Notice = { id: string; text: string; link?: string | undefined; date: string };
 export const DEFAULT_NOTICES: Notice[] = [
   { id: "n1", text: "🔥 New 2025–2026 phones added for all 12 brands.", date: "2026-11-01" },
   { id: "n2", text: "👑 VIP Tournament Sensi is live — tap to unlock.", link: "vip", date: "2026-11-01" },
