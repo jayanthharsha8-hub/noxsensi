@@ -66,3 +66,9 @@ export const DEFAULT_NOTICES: Notice[] = [
 ];
 export const getNotices = () => read<Notice[]>("nox-notices", DEFAULT_NOTICES);
 export const setNotices = (n: Notice[]) => write("nox-notices", n);
+
+export type HeroSettings = { image: string; action: "vip" | "whatsapp" | "link"; link: string; ticker: string };
+export const DEFAULT_TICKER = "UNLOCK NOX 7T VIP SENSI NOW  •  EXCLUSIVE TOURNAMENT-LEVEL SENSITIVITY  •  SUBSCRIBE ON YOUTUBE, FOLLOW ON INSTAGRAM & JOIN OUR WHATSAPP CHANNEL FOR YOUR PASSCODE  •  ";
+export const DEFAULT_HERO: HeroSettings = { image: "", action: "vip", link: "", ticker: DEFAULT_TICKER };
+export const getHero = () => ({ ...DEFAULT_HERO, ...read<Partial<HeroSettings>>("nox-hero", {}) });
+export const setHero = (h: HeroSettings) => write("nox-hero", h);

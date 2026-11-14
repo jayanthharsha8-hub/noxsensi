@@ -7,7 +7,7 @@ import { NoxLogo } from "@/components/nox-logo";
 import { brands } from "@/data/devices";
 import {
   checkLogin, getAdmins, getLinks, getOverride, getPasscodes, setAdmins, setLinks, setOverride, setPasscodes,
-  DEFAULT_LINKS, getNotices, setNotices, type AdminUser, type Passcode, type Notice,
+  DEFAULT_LINKS, getHero, setHero, DEFAULT_HERO, type HeroSettings, getNotices, setNotices, type AdminUser, type Passcode, type Notice,
 } from "@/lib/admin";
 import { SENSITIVITY_ORDER, SENSITIVITY_RANGES, type SensitivityResult } from "@/lib/sensitivity";
 
@@ -63,7 +63,7 @@ function Panel({ onLogout }: { onLogout: () => void }) {
         <h1 className="font-display text-lg font-extrabold uppercase">Admin Panel</h1>
         <button onClick={onLogout} className="text-xs font-bold text-muted-foreground">Logout</button>
       </div>
-      <NoticesEditor /><SensitivityEditor /><LinksEditor /><PasscodesEditor /><AdminsEditor />
+      <HeroEditor /><NoticesEditor /><SensitivityEditor /><LinksEditor /><PasscodesEditor /><AdminsEditor />
     </>
   );
 }
@@ -218,6 +218,34 @@ function NoticesEditor() {
         update([{ id: String(Date.now()), text: text.trim(), link: link.trim() || undefined, date: new Date().toISOString().slice(0, 10) }, ...list]);
         setText(""); setLink("");
       }}>Send Notification</button>
+    </section>
+  );
+}
+
+function HeroEditor() {
+  const [h, setH] = useState<HeroSettings>(DEFAULT_HERO); const [msg, setMsg] = useState("");
+  useEffect(() => setH(getHero()), []);
+  return (
+    <section className={card + " space-y-2"}>
+      <h2 className={h2}>Banner Settings</h2>
+      <img src={h.image || "/img/vip-hero.png"} alt="Banner preview" className="w-full rounded-lg border border-border" />
+      <input className={input} placeholder="Banner image URL (empty = default)" value={h.image} onChange={(e) => setH({ ...h, image: e.target.value })} />
+      <label className="block text-xs text-muted-foreground">Banner tap action
+        <select className={input + " mt-1"} value={h.action} onChange={(e) => setH({ ...h, action: e.target.value as HeroSettings["action"] })}>
+          <option value="vip">Open VIP passcode popup</option>
+          <option value="whatsapp">Open WhatsApp channel</option>
+          <option value="link">Open custom link</option>
+        </select>
+      </label>
+      {h.action === "link" && <input className={input} placeholder="https://..." value={h.link} onChange={(e) => setH({ ...h, link: e.target.value })} />}
+      <label className="block text-xs text-muted-foreground">Breaking news text
+        <textarea className={input + " mt-1"} rows={3} value={h.ticker} onChange={(e) => setH({ ...h, ticker: e.target.value })} />
+      </label>
+      <div className="flex gap-2">
+        <button className={btn} onClick={() => { setHero(h); setMsg("Saved ✓"); }}>Save Banner</button>
+        <button className="rounded-lg border border-border px-4 py-2 text-sm" onClick={() => { setH(DEFAULT_HERO); setHero(DEFAULT_HERO); setMsg("Reset to default"); }}>Reset</button>
+      </div>
+      {msg && <p className="text-xs text-primary">{msg}</p>}
     </section>
   );
 }

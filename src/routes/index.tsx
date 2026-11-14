@@ -2,11 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Bell } from "lucide-react";
 
 import { useEffect, useState } from "react";
-import vipHero from "@/assets/vip-hero.png.asset.json";
-import unlockBtn from "@/assets/unlock-button-v2.png.asset.json";
 import { VipDialog } from "@/components/vip-dialog";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { getLinks, getNotices, DEFAULT_NOTICES, type Notice } from "@/lib/admin";
+import { getLinks, getNotices, getHero, DEFAULT_HERO, DEFAULT_NOTICES, type Notice, type HeroSettings } from "@/lib/admin";
 import { AppFrame } from "@/components/app-frame";
 import { BrandIcon } from "@/components/brand-icon";
 import { NoxLogo } from "@/components/nox-logo";
@@ -44,6 +42,14 @@ function Index() {
   const [bellOpen, setBellOpen] = useState(false);
   const [notices, setNoticeList] = useState<Notice[]>(DEFAULT_NOTICES);
   useEffect(() => setNoticeList(getNotices()), [bellOpen]);
+  const [hero, setHeroState] = useState<HeroSettings>(DEFAULT_HERO);
+  useEffect(() => setHeroState(getHero()), []);
+  const heroTap = () => {
+    if (hero.action === "vip") return setVipOpen(true);
+    const url = hero.action === "whatsapp" ? getLinksSafe().whatsapp : hero.link;
+    if (url) window.open(url, "_blank", "noopener");
+  };
+  const ticker = hero.ticker || DEFAULT_HERO.ticker;
   return (
     <AppFrame active="home">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3">
@@ -64,18 +70,19 @@ function Index() {
       {/* VIP hero banner */}
       <section className="relative mt-4 aspect-[1672/941] w-full overflow-hidden rounded-2xl border border-border shadow-card">
         <img
-          src={vipHero.url}
+          src={hero.image || "/img/vip-hero.png"}
+          onError={(e) => { e.currentTarget.src = "/img/vip-hero.png"; }}
           alt="Unlock VIP Sensi — NOX 7T"
           className="absolute inset-0 h-full w-full object-cover"
         />
         <h1 className="sr-only">NOX SENSI — Unlock VIP Sensi</h1>
         <button
           type="button"
-          onClick={() => setVipOpen(true)}
+          onClick={heroTap}
           aria-label="Unlock VIP Sensi"
           className="absolute bottom-[3%] left-[2%] w-[40%] animate-pulse transition-transform hover:scale-105 active:scale-95"
         >
-          <img src={unlockBtn.url} alt="" className="w-full drop-shadow-lg" />
+          <img src="/img/unlock-button.png" alt="" className="w-full drop-shadow-lg" />
         </button>
       </section>
       <VipDialog open={vipOpen} onOpenChange={setVipOpen} />
@@ -128,7 +135,7 @@ function Index() {
       {/* VIP breaking news ticker */}
       <button
         type="button"
-        onClick={() => setVipOpen(true)}
+        onClick={heroTap}
         aria-label="Unlock VIP Sensi"
         className="mt-5 flex w-full items-stretch overflow-hidden rounded-xl border border-primary/40 bg-background text-left"
       >
@@ -137,8 +144,8 @@ function Index() {
         </span>
         <span className="relative flex-1 overflow-hidden py-2.5">
           <span className="nox-ticker-track flex w-max whitespace-nowrap font-display text-xs font-bold uppercase tracking-wide text-foreground">
-            <span className="pr-4">UNLOCK NOX 7T VIP SENSI NOW  •  EXCLUSIVE TOURNAMENT-LEVEL SENSITIVITY  •  SUBSCRIBE ON YOUTUBE, FOLLOW ON INSTAGRAM & JOIN OUR WHATSAPP CHANNEL FOR YOUR PASSCODE  •  </span>
-            <span className="pr-4" aria-hidden="true">UNLOCK NOX 7T VIP SENSI NOW  •  EXCLUSIVE TOURNAMENT-LEVEL SENSITIVITY  •  SUBSCRIBE ON YOUTUBE, FOLLOW ON INSTAGRAM & JOIN OUR WHATSAPP CHANNEL FOR YOUR PASSCODE  •  </span>
+            <span className="pr-4">{ticker}</span>
+            <span className="pr-4" aria-hidden="true">{ticker}</span>
           </span>
         </span>
       </button>
